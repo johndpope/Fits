@@ -65,12 +65,55 @@ public struct KeywordRecord {
 
 extension KeywordRecord {
     
+    //----------------------------
+    // MARK: - Constants
+    //----------------------------
+    
+    public enum ValidationError: ErrorType, CustomStringConvertable {
+        case keywordContainsInvalidCharacters
+        case keywordExceedsMaximumLength
+        
+        var description: String {
+            switch self {
+            case .keywordExceedsMaximumLength:
+                return "The keyword has a maximum length of eight characters."
+            case .keywordContainsInvalidCharacters:
+                return "The keyword may only contain the digits 0-9, the uppercase letters A-Z, the underscore (_), and the hyphen (-)."
+            }
+        }
+    }
+    
+    //----------------------------
+    // MARK: - Properties
+    //----------------------------
+    
+    /// The set of characters allowed in the keyword.
+    private static var validKeywordCharacters: String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_-"
+    
+    /// The set of characters allowed in strings.
+    private static var validStringCharacters: String = " !\"#$%&"
+    
+    /// The value indicator.
+    private static var valueIndicator: String = "= "
+    
+    /// The comment indicator.
+    private static var commentIndicator: String = " /"
+    
+    //----------------------------
+    // MARK: - Methods
+    //----------------------------
+    
     /**
      Validates whether or not the `KeywordRecord` follows the FITS specification.
      - parameter fixedFormat: If `true` the `KeywordRecord` will be validated against the fixed format specification. Defaults to `false`
      - returns: `true` if the header conforms to the FITS specification. `false` otherwise.
     */
-    func validate(fixedFormat: Bool = false) -> Bool {
+    func validate(fixedFormat: Bool = false) -> ValidationError? {
         
+        guard keyword.characters.count <= 8 else {
+            return .keywordExceedsMaximumLength
+        }
+        
+        return nil
     }
 }
