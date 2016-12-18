@@ -30,9 +30,9 @@ public struct KeywordRecord {
         /// An integer number.
         case integer(Int64)
         /// A floating point number.
-        case decimal(Double)
+        case float(Double)
         /// A complex integer containing a real and imaginary part.
-        case complexInteger(Int, Int)
+        case complexInteger(Int64, Int64)
         /// A complex floating point number containing a real and imaginary part.
         case complexDecimal(Double, Double)
         /// A string.
@@ -46,17 +46,36 @@ public struct KeywordRecord {
     //----------------------------
     
     /// The keyword identifying the record.
-    var keyword: String
+    public var keyword: String
     
     /// The value of the record.
-    var value: Value
+    public var value: Value
     
     /// The unit of the value if applicable.
-    var units: Unit?
+    public var units: Unit?
     
     /// The record's comments/description.
     /// - Note: This does not include the units specification string if it was included in the comment string.
-    var comments: String?
+    public var comments: String?
+    
+    //----------------------------
+    // MARK: - Initalization
+    //----------------------------
+    
+    /**
+     Initalize the keyword record.
+     - parameter keyword: The keyword identifying the record.
+     - parameter value: The value of the record.
+     - parameter units: The unit of the value if applicable.
+     - parameter comments: The record's comments/description.
+     - returns: A new keyword record.
+    */
+    public init(keyword: String, value: Value, units: Unit? = nil, comments: String? = nil) {
+        self.keyword = keyword
+        self.value = value
+        self.units = units
+        self.comments = comments
+    }
 }
 
 //----------------------------
@@ -69,16 +88,25 @@ extension KeywordRecord {
     // MARK: - Constants
     //----------------------------
     
-    public enum ValidationError: ErrorType, CustomStringConvertable {
+    public enum ValidationError: Error, CustomStringConvertible {
         case keywordContainsInvalidCharacters
         case keywordExceedsMaximumLength
+        case valueExceedsMaximumLength
+        case commentExceedsMaximumLength
+        case keywordRecordExceedsEightyCharacters
         
-        var description: String {
+        public var description: String {
             switch self {
             case .keywordExceedsMaximumLength:
                 return "The keyword has a maximum length of eight characters."
             case .keywordContainsInvalidCharacters:
                 return "The keyword may only contain the digits 0-9, the uppercase letters A-Z, the underscore (_), and the hyphen (-)."
+            case .valueExceedsMaximumLength:
+                return "The value's text representation is too large to be stored in a keyword record."
+            case .commentExceedsMaximumLength:
+                return "The comment is too large to be stored in a keyword record."
+            case .keywordRecordExceedsEightyCharacters:
+                return "The generated keyword record contains more than the maximum of eighty characters. There is an error in the validation code if this error is produced."
             }
         }
     }
@@ -88,16 +116,16 @@ extension KeywordRecord {
     //----------------------------
     
     /// The set of characters allowed in the keyword.
-    private static var validKeywordCharacters: String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_-"
+    fileprivate static let invalidKeywordCharacters: CharacterSet = CharacterSet(charactersIn: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_-").inverted
     
     /// The set of characters allowed in strings.
-    private static var validStringCharacters: String = " !\"#$%&"
+    fileprivate static let invalidStringCharacters: CharacterSet = CharacterSet(charactersIn: " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~").inverted
     
     /// The value indicator.
-    private static var valueIndicator: String = "= "
+    fileprivate static var valueIndicator: String = "= "
     
     /// The comment indicator.
-    private static var commentIndicator: String = " /"
+    fileprivate static var commentIndicator: String = " /"
     
     //----------------------------
     // MARK: - Methods
@@ -108,12 +136,42 @@ extension KeywordRecord {
      - parameter fixedFormat: If `true` the `KeywordRecord` will be validated against the fixed format specification. Defaults to `false`
      - returns: `true` if the header conforms to the FITS specification. `false` otherwise.
     */
-    func validate(fixedFormat: Bool = false) -> ValidationError? {
+    public func validate(fixedFormat: Bool = false) -> ValidationError? {
         
+        // Validate the keyword.
         guard keyword.characters.count <= 8 else {
             return .keywordExceedsMaximumLength
+        }
+        guard keyword.rangeOfCharacter(from: KeywordRecord.invalidKeywordCharacters) != nil else {
+            return .keywordContainsInvalidCharacters
         }
         
         return nil
     }
+}
+
+//----------------------------
+// MARK: - Parsing
+//----------------------------
+
+extension KeywordRecord {
+    
+    //----------------------------
+    // MARK: - Properties
+    //----------------------------
+    
+    /// The true value indicator.
+    fileprivate static let trueValueIndicator: String = "T"
+    
+    /// The false value indicator.
+    fileprivate static let falseValueIndicator: String = "F"
+
+    //----------------------------
+    // MARK: - Methods
+    //----------------------------
+    
+    //init(string: String) throws {
+    //
+    //}
+    
 }
