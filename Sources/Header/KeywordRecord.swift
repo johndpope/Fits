@@ -157,6 +157,13 @@ extension KeywordRecord {
 extension KeywordRecord {
     
     //----------------------------
+    // MARK: - Constants
+    //----------------------------
+    
+    /// The length of a keyword record in bytes as described in the FITS format.
+    public static let byteLength: Int = 80
+    
+    //----------------------------
     // MARK: - Properties
     //----------------------------
     
@@ -175,3 +182,4 @@ extension KeywordRecord {
     //}
     
 }
+
