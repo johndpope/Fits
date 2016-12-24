@@ -24,7 +24,7 @@ public class Fits {
     // MARK: - Properties
     //----------------------------
     
-    /// The array of header data units contained in the FITS file.
+    /// The array of header data units contained in the FITS file. The header data unit at index `0` is the primary HDU.
     public var headerDataUnits: [HeaderDataUnit] = []
     
     //----------------------------
@@ -87,18 +87,18 @@ public class Fits {
 
 extension Fits {
     
+    /**
+     Deserializes the given data and generates the header data units from it.
+     - parameter data: The data to deserialize.
+    */
     fileprivate func deserialize(data: Data) throws {
-        
-        let totalBytes = data.count
-        
+        // Loop over each header data unit.
         
     }
     
     fileprivate func deserialize(headerWithData data: Data) {
         
     }
-    
-    
     
     fileprivate func serialize() throws -> Data {
         return Data()
