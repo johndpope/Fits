@@ -28,7 +28,7 @@ public protocol RecordValueConvertable {
      - parameter string: The string to deserialize.
      - returns: A instance of `self` with the information contained in the given string.
      */
-    func deserialize(string: String) throws -> RecordValueConvertable
+    static func deserialize(string: String) throws -> Self
 }
 
 //----------------------------
@@ -61,11 +61,11 @@ extension NSNull: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> Self {
         guard string.trimmingCharacters(in: CharacterSet.whitespaces).characters.count == 0 else {
             throw RecordDeserializationError.invalidCharactersFound
         }
-        return NSNull()
+        return self.init()
     }
     
 }
@@ -76,8 +76,8 @@ extension Bool: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
-        return false
+    public static func deserialize(string: String) throws -> Bool {
+        return self.init()
     }
     
 }
@@ -88,7 +88,7 @@ extension Int8: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> Int8 {
         return Int8()
     }
     
@@ -100,7 +100,7 @@ extension Int16: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> Int16 {
         return Int16()
     }
     
@@ -112,7 +112,7 @@ extension Int32: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> Int32 {
         return Int32()
     }
     
@@ -124,7 +124,7 @@ extension Int64: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> Int64 {
         return Int64()
     }
     
@@ -136,7 +136,7 @@ extension Float: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> Float {
         return Float()
     }
     
@@ -148,7 +148,7 @@ extension Double: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> Double {
         return Double()
     }
     
@@ -160,7 +160,7 @@ extension ComplexInt: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> ComplexInt {
         return ComplexInt(realPart: 0, imaginaryPart: 0)
     }
     
@@ -172,7 +172,7 @@ extension ComplexFloatingPoint: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> ComplexFloatingPoint {
         return ComplexFloatingPoint(realPart: 0.0, imaginaryPart: 0.0)
     }
     
@@ -184,7 +184,7 @@ extension String: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> String {
         return ""
     }
     
@@ -196,7 +196,7 @@ extension Date: RecordValueConvertable {
         return ""
     }
     
-    public func deserialize(string: String) throws -> RecordValueConvertable {
+    public static func deserialize(string: String) throws -> Date {
         return Date()
     }
     

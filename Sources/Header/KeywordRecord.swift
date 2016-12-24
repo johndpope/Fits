@@ -15,31 +15,7 @@ import Foundation
 /**
  An 80-character record in a header block consisting of a keyword name in the first eight characters followed by an optional value indicator, value and comment string. The keyword record shall be composed only of the restricted set of ASCII text characters ranging from decimal 32 to 126 (hexadecimal 20 to 7E).
 */
-public struct KeywordRecord {
-    
-    //----------------------------
-    // MARK: - Constants
-    //----------------------------
-    
-    /// The supported values of a `KeywordRecord`.
-    public enum Value {
-        /// No value.
-        case null
-        /// A boolean.
-        case boolean(Bool)
-        /// An integer number.
-        case integer(Int64)
-        /// A floating point number.
-        case decimal(Double)
-        /// A complex integer containing a real and imaginary part.
-        case complexInteger(Int, Int)
-        /// A complex floating point number containing a real and imaginary part.
-        case complexDecimal(Double, Double)
-        /// A string.
-        case string(String)
-        /// A date.
-        case date(Date)
-    }
+public struct KeywordRecord<Value: RecordValueConvertable> {
     
     //----------------------------
     // MARK: - Properties
@@ -48,15 +24,8 @@ public struct KeywordRecord {
     /// The keyword identifying the record.
     public var keyword: String
     
-    /// The value of the record.
-    public var value: Value
-    
-    /// The unit of the value if applicable.
-    public var units: Unit?
-    
-    /// The record's comments/description.
-    /// - Note: This does not include the units specification string if it was included in the comment string.
-    public var comments: String?
+    /// The record that contains the value associated with the keyword.
+    public var record: Record<Value>
     
     //----------------------------
     // MARK: - Initalization
@@ -65,16 +34,12 @@ public struct KeywordRecord {
     /**
      Initalize the keyword record.
      - parameter keyword: The keyword identifying the record.
-     - parameter value: The value of the record.
-     - parameter units: The unit of the value if applicable.
-     - parameter comments: The record's comments/description.
+     - parameter record: The record associated with the keyword.
      - returns: A new keyword record.
     */
-    public init(keyword: String, value: Value, units: Unit? = nil, comments: String? = nil) {
+    public init(keyword: String, record: Record<Value>) {
         self.keyword = keyword
-        self.value = value
-        self.units = units
-        self.comments = comments
+        self.record = record
     }
 }
 
@@ -142,4 +107,3 @@ extension KeywordRecord {
     }
     
 }
-
